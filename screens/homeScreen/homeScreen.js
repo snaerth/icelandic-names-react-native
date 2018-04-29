@@ -8,10 +8,11 @@ import {
 } from "react-native";
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Tile from "../../components/tile";
 
 class HomeScreen extends Component {
   static navigationOptions = {
-    title: "Home"
+    title: "Íslensk mannanöfn"
   };
 
   constructor(props) {
@@ -70,44 +71,40 @@ class HomeScreen extends Component {
 
     return (
       <View style={styles.container}>
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Öll mannanöfn"
-            titleStyle={styles.titleStyle}
-            buttonStyle={styles.button}
+        <View style={styles.tileContainer}>
+          <Tile
             onPress={() =>
-              this.props.navigation.navigate("Details", { list: list.boys })
+              this.props.navigation.navigate("Details", {
+                list: list.boys,
+                title: "Strákanöfn"
+              })
             }
+            title="Strákanöfn"
+            color="#E9C77B"
           />
         </View>
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Strákar"
-            titleStyle={styles.titleStyle}
-            buttonStyle={styles.button}
+        <View style={styles.tileContainer}>
+          <Tile
             onPress={() =>
-              this.props.navigation.navigate("Details", { list: list.boys })
+              this.props.navigation.navigate("Details", {
+                list: list.girls,
+                title: "Stelpunöfn"
+              })
             }
+            title="Stelpunöfn"
+            color="#E2B49A"
           />
         </View>
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Stelpur"
-            titleStyle={styles.titleStyle}
-            buttonStyle={styles.button}
+        <View style={styles.tileContainer}>
+          <Tile
             onPress={() =>
-              this.props.navigation.navigate("Details", { list: list.girls })
+              this.props.navigation.navigate("Details", {
+                list: list.middle,
+                title: "Millinöfn"
+              })
             }
-          />
-        </View>
-        <View style={styles.buttonContainer}>
-          <Button
             title="Millinöfn"
-            titleStyle={styles.titleStyle}
-            buttonStyle={styles.button}
-            onPress={() =>
-              this.props.navigation.navigate("Details", { list: list.middle })
-            }
+            color="#9AABB9"
           />
         </View>
       </View>
@@ -119,22 +116,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    backgroundColor: "#fff"
   },
   loadingText: {
     paddingTop: 15,
     fontSize: 20
   },
-  button: {
-    backgroundColor: "rgba(92, 99,216, 1)",
-    width: 300,
-    height: 45,
-    borderColor: "transparent",
-    borderWidth: 0,
-    borderRadius: 5
-  },
-  buttonTitle: { fontWeight: "700" },
-  buttonContainer: { paddingTop: 10, paddingBottom: 10 }
+  tileContainer: {
+    paddingTop: 5,
+    paddingBottom: 5,
+    width: "100%",
+    height: "33%"
+  }
 });
 
 export default HomeScreen;

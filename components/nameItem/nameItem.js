@@ -1,17 +1,28 @@
 import React, { PureComponent } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Icon } from "react-native-elements";
 
 class NameItem extends PureComponent {
   render() {
-    const { name, subtitle } = this.props;
+    const { name, subtitle, circleColor, active } = this.props;
     return (
       <View style={styles.container}>
-        <View style={styles.circle}>
+        <View style={[styles.circle, { backgroundColor: circleColor }]}>
           <Text style={styles.letter}>{name.charAt(0)}</Text>
         </View>
         <View>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.subtitle}>{subtitle}</Text>
+        </View>
+        <View style={styles.iconContainer}>
+          <TouchableOpacity activeOpacity={0.75}>
+            <Icon
+              name="star"
+              type="octicon"
+              color={active ? "#E9C77B" : "#dcdcdc"}
+              size={40}
+            />
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -25,9 +36,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 15,
     paddingBottom: 15,
-    paddingLeft: 20,
+    paddingLeft: 15,
+    paddingRight: 40,
     borderWidth: 0.5,
-    borderColor: "#dcdcdc"
+    borderColor: "#dcdcdc",
+    backgroundColor: "#ffffff",
+    height: 80
   },
   letter: {
     fontSize: 30,
@@ -49,6 +63,11 @@ const styles = StyleSheet.create({
     borderColor: "#9b9b9b",
     justifyContent: "center",
     alignItems: "center"
+  },
+  iconContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end"
   }
 });
 

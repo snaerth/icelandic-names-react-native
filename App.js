@@ -17,11 +17,12 @@ const RootStack = StackNavigator(
     initialRouteName: "Home",
     navigationOptions: {
       headerStyle: {
-        backgroundColor: "#f4511e"
+        backgroundColor: "#193446"
       },
       headerTintColor: "#fff",
       headerTitleStyle: {
-        fontWeight: "bold"
+        fontWeight: "bold",
+        color: "#fff"
       }
     }
   }
