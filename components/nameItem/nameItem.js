@@ -1,28 +1,97 @@
 import React, { PureComponent } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ToastAndroid,
+  Platform,
+  AsyncStorage
+} from "react-native";
 import { Icon } from "react-native-elements";
 
 class NameItem extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      savedList: []
+    };
+  }
+
+  async componentDidMount() {
+    try {
+      const savedNamesList = await AsyncStorage.getItem("@SavedNamesList");
+
+      if (savedNamesList !== null) {
+        this.setState({
+          savedList: JSON.parse(savedNamesList)
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  saveName = async () => {
+    const { item } = this.props;
+
+    let exists = false;
+
+    try {
+      let savedList = await AsyncStorage.getItem("@SavedNamesList");
+      savedList = JSON.parse(savedList);
+      console.log(savedList);
+      if (savedList && savedList.length === 0) {
+        savedList.push(item);
+      } else {
+        for (let i = 0; i < savedList.length; i++) {
+          if (savedList[i].name === item.name) {
+            exists = true;
+            break;
+          }
+        }
+
+        if (exists) {
+          savedList.push(item);
+        }
+      }
+
+      await AsyncStorage.setItem("@SavedNamesList", JSON.stringify(savedList));
+    } catch (error) {
+      console.error(error);
+      this.notifyToast(`Villa kom upp við að vista nafn!`);
+    }
+
+    this.notifyToast(`Nafn ${item.name} vistað!`);
+  };
+
+  notifyToast(text) {
+    if (Platform.OS === "android") {
+      ToastAndroid.show(text, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+    }
+  }
+
   render() {
-    const { name, subtitle, circleColor, active } = this.props;
+    const { item, circleColor, active } = this.props;
+
     return (
       <View style={styles.container}>
         <View style={[styles.circle, { backgroundColor: circleColor }]}>
-          <Text style={styles.letter}>{name.charAt(0)}</Text>
+          <Text style={styles.letter}>{item.name.charAt(0)}</Text>
         </View>
         <View>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.subtitle}>{subtitle}</Text>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.subtitle}>{item.subtitle}</Text>
         </View>
         <View style={styles.iconContainer}>
-          <TouchableOpacity activeOpacity={0.75}>
-            <Icon
-              name="star"
-              type="octicon"
-              color={active ? "#E9C77B" : "#dcdcdc"}
-              size={40}
-            />
-          </TouchableOpacity>
+          <Icon
+            name="star"
+            type="octicon"
+            color={active ? "#E9C77B" : "#dcdcdc"}
+            size={40}
+            onPress={this.saveName}
+          />
         </View>
       </View>
     );

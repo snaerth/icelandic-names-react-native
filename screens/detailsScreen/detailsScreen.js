@@ -25,9 +25,7 @@ class DetailsScreen extends PureComponent {
     title: `${navigation.state.params.title}`
   });
 
-  renderItem = ({ item }) => (
-    <NameItem key={item.key} name={item.name} subtitle={item.extra} />
-  );
+  renderItem = ({ item }) => <NameItem key={item.key} item={item} />;
 
   onLetterPress(letter) {
     this.setState({ letter });
@@ -63,7 +61,7 @@ class DetailsScreen extends PureComponent {
                   key={i}
                   style={styles.letter}
                   //onPress={() => this.onLetterPress(letter)}
-                  onPress={this.scrollToItem}
+                  //onPress={this.scrollToItem}
                 >
                   {letter}
                 </Text>
