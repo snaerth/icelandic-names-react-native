@@ -39,27 +39,33 @@ class HomeScreen extends Component {
   }
 
   renderError(error) {
+    const { container } = styles;
+
     return (
-      <View style={styles.container}>
+      <View style={container}>
         <Text>{error}</Text>
       </View>
     );
   }
 
   renderLoading() {
+    const { container, loadingText } = styles;
+
     return (
-      <View style={styles.container}>
+      <View style={container}>
         <ActivityIndicator
           size={Platform.OS === "ios" ? "large" : 60}
-          color="#f4511e"
+          color="#193446"
         />
-        <Text style={styles.loadingText}>Sæki nöfn...</Text>
+        <Text style={loadingText}>Sæki nöfn...</Text>
       </View>
     );
   }
 
   render() {
     const { isLoading, error, list } = this.state;
+    const { navigation } = this.props;
+    const { container, tileContainer } = styles;
 
     if (error) {
       return this.renderError(error);
@@ -70,36 +76,36 @@ class HomeScreen extends Component {
     }
 
     return (
-      <View style={styles.container}>
-        <View style={styles.tileContainer}>
+      <View style={container}>
+        <View style={tileContainer}>
           <Tile
             onPress={() =>
-              this.props.navigation.navigate("Details", {
-                list: list.boys,
+              navigation.navigate("Details", {
+                data: list.boys,
                 title: "Strákanöfn"
               })
             }
             title="Strákanöfn"
-            color="#E9C77B"
+            color="#E2B49A"
           />
         </View>
-        <View style={styles.tileContainer}>
+        <View style={tileContainer}>
           <Tile
             onPress={() =>
-              this.props.navigation.navigate("Details", {
-                list: list.girls,
+              navigation.navigate("Details", {
+                data: list.girls,
                 title: "Stelpunöfn"
               })
             }
             title="Stelpunöfn"
-            color="#E2B49A"
+            color="#E9C77B"
           />
         </View>
-        <View style={styles.tileContainer}>
+        <View style={tileContainer}>
           <Tile
             onPress={() =>
-              this.props.navigation.navigate("Details", {
-                list: list.middle,
+              navigation.navigate("Details", {
+                data: list.middle,
                 title: "Millinöfn"
               })
             }

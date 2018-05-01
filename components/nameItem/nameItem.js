@@ -19,20 +19,6 @@ class NameItem extends PureComponent {
     };
   }
 
-  async componentDidMount() {
-    try {
-      const savedNamesList = await AsyncStorage.getItem("@SavedNamesList");
-
-      if (savedNamesList !== null) {
-        this.setState({
-          savedList: JSON.parse(savedNamesList)
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   saveName = async () => {
     const { item } = this.props;
 
@@ -74,17 +60,18 @@ class NameItem extends PureComponent {
 
   render() {
     const { item, circleColor, active } = this.props;
+    const { container, name, subtitle, letter, circle, iconContainer } = styles;
 
     return (
-      <View style={styles.container}>
-        <View style={[styles.circle, { backgroundColor: circleColor }]}>
-          <Text style={styles.letter}>{item.name.charAt(0)}</Text>
+      <View style={container}>
+        <View style={[circle, { backgroundColor: circleColor }]}>
+          <Text style={letter}>{item.name.charAt(0)}</Text>
         </View>
         <View>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.subtitle}>{item.subtitle}</Text>
+          <Text style={name}>{item.name}</Text>
+          <Text style={subtitle}>{item.subtitle}</Text>
         </View>
-        <View style={styles.iconContainer}>
+        <View style={iconContainer}>
           <Icon
             name="star"
             type="octicon"

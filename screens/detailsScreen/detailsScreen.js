@@ -8,16 +8,18 @@ import {
   Alert
 } from "react-native";
 import NameItem from "../../components/nameItem";
-import Alphabet from "../../utils/alphabet";
+
+const ROW_HEIGHT = 80;
 
 class DetailsScreen extends PureComponent {
   constructor(props) {
     super(props);
 
+    const { letterIndexes } = this.props.navigation.state.params.data;
     this.state = {
-      list: this.props.navigation.state.params.list,
-      alphabet: Alphabet,
-      letter: "A"
+      letter: "A",
+      letterIndexes,
+      letterIndexesValues: Object.values(letterIndexes)
     };
   }
 
@@ -25,30 +27,71 @@ class DetailsScreen extends PureComponent {
     title: `${navigation.state.params.title}`
   });
 
-  renderItem = ({ item }) => <NameItem key={item.key} item={item} />;
+  renderItem = ({ item }) => <NameItem key={item.id} item={item} />;
 
   onLetterPress(letter) {
+    const { letterIndexes } = this.state;
+
     this.setState({ letter });
+
+    try {
+      this.flatListRef.scrollToIndex({
+        animated: true,
+        index: letterIndexes[letter]
+      });
+    } catch (e) {}
   }
 
-  scrollToItem = () => {
-    this.flatListRef.scrollToIndex({ animated: false, index: 100 });
+  getItemLayout = (data, index) => {
+    return { length: ROW_HEIGHT, offset: ROW_HEIGHT * index, index };
   };
 
-  getItemLayout = (data, index) => {
-    return { length: 80, offset: 80 * 100, index };
+  handleScroll = event => {
+    const { letterIndexes, letterIndexesValues } = this.state;
+    const y = event.nativeEvent.contentOffset.y + ROW_HEIGHT;
+    const index = parseInt(y / ROW_HEIGHT);
+
+    let letter = "A";
+    let cnt = 0;
+
+    for (const key in letterIndexes) {
+      if (letterIndexes.hasOwnProperty(key)) {
+        const startIndex = letterIndexes[key];
+        const endIndex =
+          letterIndexesValues[cnt + 1] !== undefined
+            ? letterIndexesValues[cnt + 1]
+            : startIndex;
+
+        if (startIndex <= index && index <= endIndex) {
+          letter = key;
+          break;
+        }
+      }
+
+      cnt += 1;
+    }
+
+    if (letter !== this.state.letter) {
+      this.setState({ letter });
+    }
   };
 
   render() {
-    const { list, alphabet } = this.state;
+    const {
+      list,
+      letterIndexes,
+      alphabet
+    } = this.props.navigation.state.params.data;
 
     return (
       <View className={styles.container}>
         <FlatList
           data={list}
-          keyExtractor={item => item.name}
+          keyExtractor={item => item.id}
           renderItem={this.renderItem}
-          //getItemLayout={this.getItemLayout}
+          getItemLayout={this.getItemLayout}
+          initialNumToRender={20}
+          onScrollEndDrag={this.handleScroll}
           ref={ref => {
             this.flatListRef = ref;
           }}
@@ -56,12 +99,13 @@ class DetailsScreen extends PureComponent {
         <ScrollView style={styles.alphabetContainer}>
           <View>
             {alphabet.map((letter, i) => {
+              const active = letter === this.state.letter ? true : false;
+
               return (
                 <Text
                   key={i}
-                  style={styles.letter}
-                  //onPress={() => this.onLetterPress(letter)}
-                  //onPress={this.scrollToItem}
+                  style={[styles.letter, active ? styles.letterActive : ""]}
+                  onPress={() => this.onLetterPress(letter)}
                 >
                   {letter}
                 </Text>
@@ -95,6 +139,9 @@ const styles = StyleSheet.create({
   letter: {
     color: "#9b9b9b",
     paddingBottom: 3
+  },
+  letterActive: {
+    color: "#50d9af"
   }
 });
 
