@@ -82,9 +82,16 @@ class DetailsScreen extends PureComponent {
       letterIndexes,
       alphabet
     } = this.props.navigation.state.params.data;
+    const {
+      alphabetContainer,
+      container,
+      letter,
+      letterActive,
+      letterLast
+    } = styles;
 
     return (
-      <View className={styles.container}>
+      <View className={container}>
         <FlatList
           data={list}
           keyExtractor={item => item.id}
@@ -96,18 +103,22 @@ class DetailsScreen extends PureComponent {
             this.flatListRef = ref;
           }}
         />
-        <ScrollView style={styles.alphabetContainer}>
+        <ScrollView
+          style={alphabetContainer}
+          showsHorizontalScrollIndicator={false}
+        >
           <View>
-            {alphabet.map((letter, i) => {
-              const active = letter === this.state.letter ? true : false;
+            {alphabet.map((l, i) => {
+              const active = l === this.state.letter ? letterActive : "";
+              const last = i === alphabet.length - 1 ? letterLast : "";
 
               return (
                 <Text
                   key={i}
-                  style={[styles.letter, active ? styles.letterActive : ""]}
-                  onPress={() => this.onLetterPress(letter)}
+                  style={[letter, active, last]}
+                  onPress={() => this.onLetterPress(l)}
                 >
-                  {letter}
+                  {l}
                 </Text>
               );
             })}
@@ -126,19 +137,24 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 10,
     top: 10,
-    flex: 1,
+    bottom: 10,
     borderWidth: 0.5,
     borderColor: "#9b9b9b",
     backgroundColor: "#fff",
-    paddingLeft: 7,
+    paddingLeft: 4,
     paddingRight: 4,
-    paddingTop: 5,
-    paddingBottom: 5,
-    borderRadius: 20
+    paddingTop: 7,
+    borderRadius: 20,
+    overflow: "hidden"
   },
   letter: {
     color: "#9b9b9b",
-    paddingBottom: 3
+    paddingBottom: 3,
+    fontSize: 20,
+    textAlign: "center"
+  },
+  letterLast: {
+    paddingBottom: 14
   },
   letterActive: {
     color: "#50d9af"
