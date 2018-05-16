@@ -4,11 +4,13 @@ import {
   Text,
   ActivityIndicator,
   Platform,
-  StyleSheet
+  StyleSheet,
+  AsyncStorage
 } from "react-native";
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Tile from "../../components/tile";
+import { getItemValue } from "../../utils/AsyncStorage";
 
 class HomeScreen extends Component {
   static navigationOptions = {
@@ -20,14 +22,48 @@ class HomeScreen extends Component {
     this.state = { isLoading: true, error: "", list: null };
   }
 
+  /**
+   * Sets active state each name object
+   * which maches named object in saved list
+   *
+   * @param {Object} namesList - List of names from service
+   * @param {Array} savedNamesList - Saved list of names objects
+   * @returns {Object} list
+   */
+  addActiveToState(namesList, savedNamesList) {
+    for (const key in namesList) {
+      if (namesList.hasOwnProperty(key)) {
+        // List of names objects for girls, boys and middle names
+        const list = namesList[key].list;
+
+        for (let i = 0; i < list.length; i += 1) {
+          const l = list[i];
+
+          for (let j = 0; j < savedNamesList.length; j += 1) {
+            const s = savedNamesList[j];
+            if (i < 20) {
+              console.log(s.name, l.name, s.name === l.name);
+            }
+
+            l.active = s.name === l.name ? true : false;
+          }
+        }
+      }
+    }
+
+    return namesList;
+  }
+
   async componentDidMount() {
     try {
+      const savedList = await getItemValue("@SavedNamesList");
       const response = await fetch("http://138.68.191.12:1337/names");
-      const responseJson = await response.json();
+      let responseJson = await response.json();
 
       this.setState({
         isLoading: false,
-        list: responseJson
+        list: responseJson,
+        savedList: JSON.parse(savedList)
       });
     } catch (error) {
       console.error(error);
@@ -63,7 +99,7 @@ class HomeScreen extends Component {
   }
 
   render() {
-    const { isLoading, error, list } = this.state;
+    const { isLoading, error, list, savedList } = this.state;
     const { navigation } = this.props;
     const { container, tileContainer } = styles;
 
@@ -81,6 +117,7 @@ class HomeScreen extends Component {
           <Tile
             onPress={() =>
               navigation.navigate("Details", {
+                savedList,
                 data: list.boys,
                 title: "Strákanöfn"
               })
@@ -93,6 +130,7 @@ class HomeScreen extends Component {
           <Tile
             onPress={() =>
               navigation.navigate("Details", {
+                savedList,
                 data: list.girls,
                 title: "Stelpunöfn"
               })
@@ -105,6 +143,7 @@ class HomeScreen extends Component {
           <Tile
             onPress={() =>
               navigation.navigate("Details", {
+                savedList,
                 data: list.middle,
                 title: "Millinöfn"
               })

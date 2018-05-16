@@ -20,36 +20,39 @@ class NameItem extends PureComponent {
   }
 
   saveName = async () => {
-    const { item } = this.props;
-
+    const { item, onClick } = this.props;
     let exists = false;
 
     try {
       let savedList = await AsyncStorage.getItem("@SavedNamesList");
-      savedList = JSON.parse(savedList);
-      console.log(savedList);
-      if (savedList && savedList.length === 0) {
+
+      if (savedList === null) {
+        savedList = [];
         savedList.push(item);
       } else {
+        savedList = JSON.parse(savedList);
+
         for (let i = 0; i < savedList.length; i++) {
-          if (savedList[i].name === item.name) {
+          if (savedList[i].id === item.id) {
             exists = true;
             break;
           }
         }
 
-        if (exists) {
+        if (!exists) {
           savedList.push(item);
+          this.notifyToast(`Nafn ${item.name} vistað!`);
+        } else {
+          this.notifyToast(`Nafn ${item.name} eytt!`);
         }
       }
 
       await AsyncStorage.setItem("@SavedNamesList", JSON.stringify(savedList));
+      onClick();
     } catch (error) {
       console.error(error);
       this.notifyToast(`Villa kom upp við að vista nafn!`);
     }
-
-    this.notifyToast(`Nafn ${item.name} vistað!`);
   };
 
   notifyToast(text) {

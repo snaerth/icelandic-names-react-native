@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import {
   View,
   FlatList,
@@ -8,18 +8,23 @@ import {
   Alert
 } from "react-native";
 import NameItem from "../../components/nameItem";
+import { getItemValue, removeItemValue } from "../../utils/AsyncStorage";
 
 const ROW_HEIGHT = 80;
 
-class DetailsScreen extends PureComponent {
+class DetailsScreen extends Component {
   constructor(props) {
     super(props);
 
-    const { letterIndexes } = this.props.navigation.state.params.data;
+    const {
+      data: { letterIndexes },
+      savedList
+    } = this.props.navigation.state.params;
     this.state = {
       letter: "A",
       letterIndexes,
-      letterIndexesValues: Object.values(letterIndexes)
+      letterIndexesValues: Object.values(letterIndexes),
+      savedList
     };
   }
 
@@ -27,7 +32,28 @@ class DetailsScreen extends PureComponent {
     title: `${navigation.state.params.title}`
   });
 
-  renderItem = ({ item }) => <NameItem key={item.id} item={item} />;
+  onClick = async () => {
+    const savedList = await getItemValue("@SavedNamesList");
+    this.setState({ savedList });
+  };
+
+  renderItem = ({ item }) => {
+    const { savedList } = this.state;
+    let active = false;
+
+    if (savedList) {
+      const active = savedList.find(i => item.name === i.name) ? true : false;
+    }
+
+    return (
+      <NameItem
+        key={item.id}
+        item={item}
+        active={active}
+        onClick={this.onClick}
+      />
+    );
+  };
 
   onLetterPress(letter) {
     const { letterIndexes } = this.state;
