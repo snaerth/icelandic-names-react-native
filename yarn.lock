@@ -6123,6 +6123,12 @@ react-native-gesture-handler@1.0.0-alpha.41:
     invariant "^2.2.2"
     prop-types "^15.5.10"
 
+react-native-largelist@^1.2.12:
+  version "1.2.12"
+  resolved "https://registry.yarnpkg.com/react-native-largelist/-/react-native-largelist-1.2.12.tgz#05a94cdf47ca0c63b102348a1b6c4ae566ce2ecc"
+  dependencies:
+    prop-types "^15.6.0"
+
 "react-native-maps@https://github.com/expo/react-native-maps/archive/0.20.1-exp.0.tar.gz":
   version "0.20.1"
   resolved "https://github.com/expo/react-native-maps/archive/0.20.1-exp.0.tar.gz#81d607e2d77481c0441aecfdbc303389a34084c0"

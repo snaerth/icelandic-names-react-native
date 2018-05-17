@@ -35,6 +35,7 @@ class NameItem extends PureComponent {
         for (let i = 0; i < savedList.length; i++) {
           if (savedList[i].id === item.id) {
             exists = true;
+            savedList.splice(i, 1);
             break;
           }
         }
@@ -48,7 +49,9 @@ class NameItem extends PureComponent {
       }
 
       await AsyncStorage.setItem("@SavedNamesList", JSON.stringify(savedList));
-      onClick();
+
+      // Callback click hander
+      onClick(savedList);
     } catch (error) {
       console.error(error);
       this.notifyToast(`Villa kom upp við að vista nafn!`);
@@ -62,7 +65,7 @@ class NameItem extends PureComponent {
   }
 
   render() {
-    const { item, circleColor, active } = this.props;
+    const { item, circleColor } = this.props;
     const { container, name, subtitle, letter, circle, iconContainer } = styles;
 
     return (
@@ -78,7 +81,7 @@ class NameItem extends PureComponent {
           <Icon
             name="star"
             type="octicon"
-            color={active ? "#E9C77B" : "#dcdcdc"}
+            color={item.active ? "#E9C77B" : "#dcdcdc"}
             size={40}
             onPress={this.saveName}
           />

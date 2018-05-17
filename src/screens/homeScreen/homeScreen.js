@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import Tile from "../../components/tile";
 import { getItemValue } from "../../utils/AsyncStorage";
 
-class HomeScreen extends Component {
+class HomeScreen extends PureComponent {
   static navigationOptions = {
     title: "Íslensk mannanöfn"
   };
@@ -20,38 +20,6 @@ class HomeScreen extends Component {
   constructor(props) {
     super(props);
     this.state = { isLoading: true, error: "", list: null };
-  }
-
-  /**
-   * Sets active state each name object
-   * which maches named object in saved list
-   *
-   * @param {Object} namesList - List of names from service
-   * @param {Array} savedNamesList - Saved list of names objects
-   * @returns {Object} list
-   */
-  addActiveToState(namesList, savedNamesList) {
-    for (const key in namesList) {
-      if (namesList.hasOwnProperty(key)) {
-        // List of names objects for girls, boys and middle names
-        const list = namesList[key].list;
-
-        for (let i = 0; i < list.length; i += 1) {
-          const l = list[i];
-
-          for (let j = 0; j < savedNamesList.length; j += 1) {
-            const s = savedNamesList[j];
-            if (i < 20) {
-              console.log(s.name, l.name, s.name === l.name);
-            }
-
-            l.active = s.name === l.name ? true : false;
-          }
-        }
-      }
-    }
-
-    return namesList;
   }
 
   async componentDidMount() {

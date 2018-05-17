@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import {
   View,
   FlatList,
@@ -8,51 +8,73 @@ import {
   Alert
 } from "react-native";
 import NameItem from "../../components/nameItem";
-import { getItemValue, removeItemValue } from "../../utils/AsyncStorage";
 
 const ROW_HEIGHT = 80;
 
-class DetailsScreen extends Component {
+class DetailsScreen extends PureComponent {
   constructor(props) {
     super(props);
 
     const {
-      data: { letterIndexes },
+      data: { list, letterIndexes, alphabet },
       savedList
     } = this.props.navigation.state.params;
     this.state = {
+      alphabet,
       letter: "A",
       letterIndexes,
       letterIndexesValues: Object.values(letterIndexes),
-      savedList
+      savedList,
+      list,
+      refreshFlatList: 0
     };
+  }
+
+  componentWillMount() {
+    const { list, savedList, refreshFlatList } = this.state;
+
+    this.setState({
+      list: this.updateListActiveState(list, savedList),
+      refreshFlatList: !refreshFlatList
+    });
   }
 
   static navigationOptions = ({ navigation }) => ({
     title: `${navigation.state.params.title}`
   });
 
-  onClick = async () => {
-    const savedList = await getItemValue("@SavedNamesList");
-    this.setState({ savedList });
+  /**
+   * Adds active prop to each object in array.
+   * If they exists in savedList then we set active prop as true
+   *
+   * @param {Array<Object>} list - Names list
+   * @param {Array<Object>} savedList - Saved names list
+   * @returns {Array<Object>} list
+   */
+  updateListActiveState(list, savedList) {
+    return list.map(item => {
+      item.active = savedList.some(s => item.name === s.name);
+      return item;
+    });
+  }
+
+  /**
+   * Updates list names state with new state
+   */
+  onClick = savedList => {
+    const { list, refreshFlatList } = this.state;
+
+    this.setState({
+      list: this.updateListActiveState(list, savedList),
+      refreshFlatList: !refreshFlatList
+    });
   };
 
+  /**
+   * Renders FlatList single item
+   */
   renderItem = ({ item }) => {
-    const { savedList } = this.state;
-    let active = false;
-
-    if (savedList) {
-      const active = savedList.find(i => item.name === i.name) ? true : false;
-    }
-
-    return (
-      <NameItem
-        key={item.id}
-        item={item}
-        active={active}
-        onClick={this.onClick}
-      />
-    );
+    return <NameItem key={item.id} item={item} onClick={this.onClick} />;
   };
 
   onLetterPress(letter) {
@@ -103,11 +125,7 @@ class DetailsScreen extends Component {
   };
 
   render() {
-    const {
-      list,
-      letterIndexes,
-      alphabet
-    } = this.props.navigation.state.params.data;
+    const { list, letterIndexes, alphabet, refreshFlatList } = this.state;
     const {
       alphabetContainer,
       container,
@@ -119,12 +137,13 @@ class DetailsScreen extends Component {
     return (
       <View className={container}>
         <FlatList
-          data={list}
+          data={this.state.list}
           keyExtractor={item => item.id}
           renderItem={this.renderItem}
           getItemLayout={this.getItemLayout}
           initialNumToRender={20}
           onScrollEndDrag={this.handleScroll}
+          extraData={this.state}
           ref={ref => {
             this.flatListRef = ref;
           }}
