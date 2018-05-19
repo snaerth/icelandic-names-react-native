@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import {
   View,
   FlatList,
@@ -11,7 +11,7 @@ import NameItem from "../../components/nameItem";
 
 const ROW_HEIGHT = 80;
 
-class DetailsScreen extends PureComponent {
+class DetailsScreen extends Component {
   constructor(props) {
     super(props);
 
@@ -24,18 +24,18 @@ class DetailsScreen extends PureComponent {
       letter: "A",
       letterIndexes,
       letterIndexesValues: Object.values(letterIndexes),
-      savedList,
+      savedList: savedList || [],
       list,
-      refreshFlatList: 0
+      updated: false
     };
   }
 
   componentWillMount() {
-    const { list, savedList, refreshFlatList } = this.state;
+    const { list, savedList, refreshFlatList, updated } = this.state;
 
     this.setState({
       list: this.updateListActiveState(list, savedList),
-      refreshFlatList: !refreshFlatList
+      updated: !updated
     });
   }
 
@@ -62,11 +62,11 @@ class DetailsScreen extends PureComponent {
    * Updates list names state with new state
    */
   onClick = savedList => {
-    const { list, refreshFlatList } = this.state;
+    const { list, updated } = this.state;
 
     this.setState({
       list: this.updateListActiveState(list, savedList),
-      refreshFlatList: !refreshFlatList
+      updated: !updated
     });
   };
 
@@ -125,7 +125,7 @@ class DetailsScreen extends PureComponent {
   };
 
   render() {
-    const { list, letterIndexes, alphabet, refreshFlatList } = this.state;
+    const { list, letterIndexes, alphabet, savedList, updated } = this.state;
     const {
       alphabetContainer,
       container,
@@ -133,17 +133,17 @@ class DetailsScreen extends PureComponent {
       letterActive,
       letterLast
     } = styles;
-
+    console.log(updated);
     return (
       <View className={container}>
         <FlatList
-          data={this.state.list}
+          data={list}
           keyExtractor={item => item.id}
           renderItem={this.renderItem}
           getItemLayout={this.getItemLayout}
           initialNumToRender={20}
           onScrollEndDrag={this.handleScroll}
-          extraData={this.state}
+          extraData={updated}
           ref={ref => {
             this.flatListRef = ref;
           }}

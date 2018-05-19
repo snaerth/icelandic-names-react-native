@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import {
   View,
   Text,
@@ -10,9 +10,9 @@ import {
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Tile from "../../components/tile";
-import { getItemValue } from "../../utils/AsyncStorage";
+import { getItemValue, removeItemValue } from "../../utils/AsyncStorage";
 
-class HomeScreen extends PureComponent {
+class HomeScreen extends Component {
   static navigationOptions = {
     title: "Íslensk mannanöfn"
   };
@@ -24,6 +24,7 @@ class HomeScreen extends PureComponent {
 
   async componentDidMount() {
     try {
+      await removeItemValue("@SavedNamesList");
       const savedList = await getItemValue("@SavedNamesList");
       const response = await fetch("http://138.68.191.12:1337/names");
       let responseJson = await response.json();
