@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Animated, Easing } from "react-native";
 import { StackNavigator } from "react-navigation";
+import { Icon } from "react-native-elements";
 import HomeScreen from "./screens/homeScreen";
 import DetailsScreen from "./screens/detailsScreen";
 
@@ -51,6 +52,7 @@ const transitionConfig = () => {
     }
   };
 };
+
 const RootStack = StackNavigator(
   {
     Home: {
@@ -70,8 +72,12 @@ const RootStack = StackNavigator(
       headerTintColor: "#fff",
       headerTitleStyle: {
         fontWeight: "bold",
-        color: "#fff"
-      }
+        color: "#fff",
+        textAlign: "center",
+        justifyContent: "center",
+        flex: 1
+      },
+      headerLeft: <Icon name="grabber" type="octicon" color="#FFF" size={40} />
     }
   }
 );

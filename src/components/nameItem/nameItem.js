@@ -42,14 +42,14 @@ class NameItem extends PureComponent {
 
         if (!exists) {
           savedList.push(item);
-          this.notifyToast(`Nafn ${item.name} vistað!`);
         } else {
           this.notifyToast(`Nafn ${item.name} eytt!`);
         }
       }
 
+      this.notifyToast(`Nafn ${item.name} vistað!`);
       await AsyncStorage.setItem("@SavedNamesList", JSON.stringify(savedList));
-
+      console.log(savedList);
       // Callback click hander
       onClick(savedList);
     } catch (error) {

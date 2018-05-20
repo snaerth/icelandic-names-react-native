@@ -10,7 +10,7 @@ import {
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Tile from "../../components/tile";
-import { getItemValue, removeItemValue } from "../../utils/AsyncStorage";
+import { getItemValue } from "../../utils/AsyncStorage";
 
 class HomeScreen extends Component {
   static navigationOptions = {
@@ -24,7 +24,6 @@ class HomeScreen extends Component {
 
   async componentDidMount() {
     try {
-      await removeItemValue("@SavedNamesList");
       const savedList = await getItemValue("@SavedNamesList");
       const response = await fetch("http://138.68.191.12:1337/names");
       let responseJson = await response.json();
@@ -35,7 +34,6 @@ class HomeScreen extends Component {
         savedList: JSON.parse(savedList)
       });
     } catch (error) {
-      console.error(error);
       this.setState({
         isLoading: false,
         error: "Úps eitthvað kom upp á"
