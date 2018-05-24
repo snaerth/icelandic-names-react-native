@@ -1,25 +1,27 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { LinearGradient } from "expo";
 
 class Tile extends Component {
   render() {
-    const { onPress, title, color } = this.props;
+    const { onPress, title, colors } = this.props;
+    const { containerOuter, titleText } = styles;
 
     return (
       <TouchableOpacity onPress={() => onPress()} activeOpacity={0.75}>
-        <View style={[styles.container, { backgroundColor: color }]}>
-          <Text style={styles.title}>{title}</Text>
-        </View>
+        <LinearGradient colors={colors} style={containerOuter}>
+          <Text style={titleText}>{title}</Text>
+        </LinearGradient>
       </TouchableOpacity>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  containerOuter: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#E9C77B",
     height: "100%",
     borderRadius: 5,
     borderWidth: 0,
@@ -27,11 +29,17 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10
   },
-  title: {
+  titleText: {
     fontWeight: "700",
     fontSize: 50,
     color: "#fff"
   }
 });
+
+Tile.propTypes = {
+  colors: PropTypes.array.isRequired,
+  onPress: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired
+};
 
 export default Tile;

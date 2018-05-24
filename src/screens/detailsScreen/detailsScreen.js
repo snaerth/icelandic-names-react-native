@@ -13,6 +13,10 @@ import Alphabet from "../../components/alphabet";
 const ROW_HEIGHT = 80;
 
 class DetailsScreen extends Component {
+  static navigationOptions = ({ navigation }) => ({
+    title: navigation.state.params.title
+  });
+
   constructor(props) {
     super(props);
 
@@ -39,10 +43,6 @@ class DetailsScreen extends Component {
       updated: !updated
     });
   }
-
-  static navigationOptions = ({ navigation }) => ({
-    title: `${navigation.state.params.title}`
-  });
 
   /**
    * Adds active prop to each object in array.
@@ -84,7 +84,7 @@ class DetailsScreen extends Component {
    *
    * @param {String} letter - Any letter in alphabet
    */
-  onLetterPress(letter) {
+  onLetterPressHandler(letter) {
     const { letterIndexes } = this.state;
 
     this.setState({ letter });
@@ -164,7 +164,7 @@ class DetailsScreen extends Component {
         />
         <Alphabet
           alphabet={alphabet}
-          onLetterPressHandler={this.onLetterPress}
+          onLetterPressHandler={this.onLetterPressHandler}
           letter={letter}
         />
       </View>
@@ -174,7 +174,9 @@ class DetailsScreen extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff"
+    backgroundColor: "red",
+    paddingLeft: 15,
+    paddingRight: 15
   }
 });
 

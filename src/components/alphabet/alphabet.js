@@ -26,7 +26,7 @@ class Alphabet extends Component {
               <Text
                 key={i}
                 style={[letterStyles, active, last]}
-                onPress={() => this.onLetterPressHandler(l)}
+                onPress={() => onLetterPressHandler(l)}
               >
                 {l}
               </Text>

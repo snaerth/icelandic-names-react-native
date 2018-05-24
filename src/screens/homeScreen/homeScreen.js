@@ -7,14 +7,14 @@ import {
   StyleSheet,
   AsyncStorage
 } from "react-native";
-import { Button } from "react-native-elements";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { Button, Icon } from "react-native-elements";
 import Tile from "../../components/tile";
 import { getItemValue } from "../../utils/AsyncStorage";
 
 class HomeScreen extends Component {
   static navigationOptions = {
-    title: "Íslensk mannanöfn"
+    title: "Íslensk mannanöfn",
+    drawerLabel: "Íslensk mannanöfn"
   };
 
   constructor(props) {
@@ -34,6 +34,7 @@ class HomeScreen extends Component {
         savedList: JSON.parse(savedList)
       });
     } catch (error) {
+      console.log(error);
       this.setState({
         isLoading: false,
         error: "Úps eitthvað kom upp á"
@@ -90,7 +91,8 @@ class HomeScreen extends Component {
               })
             }
             title="Strákanöfn"
-            color="#E2B49A"
+            start={[0, 0.5]}
+            colors={["#F4B69C", "#E8849E"]}
           />
         </View>
         <View style={tileContainer}>
@@ -103,7 +105,8 @@ class HomeScreen extends Component {
               })
             }
             title="Stelpunöfn"
-            color="#E9C77B"
+            start={[0, 0.5]}
+            colors={["#68C2DD", "#77e8b9"]}
           />
         </View>
         <View style={tileContainer}>
@@ -116,7 +119,8 @@ class HomeScreen extends Component {
               })
             }
             title="Millinöfn"
-            color="#9AABB9"
+            start={[0, 0.5]}
+            colors={["#c2e9fb", "#a1c4fd"]}
           />
         </View>
       </View>
@@ -127,17 +131,19 @@ class HomeScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff"
+    backgroundColor: "#2E3859",
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 10,
+    paddingBottom: 10
   },
   loadingText: {
     paddingTop: 15,
     fontSize: 20
   },
   tileContainer: {
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingTop: 10,
+    paddingBottom: 10,
     width: "100%",
     height: "33%"
   }
