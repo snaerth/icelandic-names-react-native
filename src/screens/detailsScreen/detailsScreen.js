@@ -1,14 +1,8 @@
 import React, { Component } from "react";
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Text,
-  ScrollView,
-  Alert
-} from "react-native";
+import { View, FlatList, StyleSheet, Text, Alert } from "react-native";
 import NameItem from "../../components/nameItem";
 import Alphabet from "../../components/alphabet";
+import updateListActiveState from "../../utils/updateListActiveState";
 
 const ROW_HEIGHT = 80;
 
@@ -33,29 +27,16 @@ class DetailsScreen extends Component {
       list,
       updated: false
     };
+
+    this.onLetterPressHandler = this.onLetterPressHandler.bind(this);
   }
 
   componentWillMount() {
     const { list, savedList, refreshFlatList, updated } = this.state;
 
     this.setState({
-      list: this.updateListActiveState(list, savedList),
+      list: updateListActiveState(list, savedList),
       updated: !updated
-    });
-  }
-
-  /**
-   * Adds active prop to each object in array.
-   * If they exists in savedList then we set active prop as true
-   *
-   * @param {Array<Object>} list - Names list
-   * @param {Array<Object>} savedList - Saved names list
-   * @returns {Array<Object>} list
-   */
-  updateListActiveState(list, savedList) {
-    return list.map(item => {
-      item.active = savedList.some(s => item.name === s.name);
-      return item;
     });
   }
 
@@ -66,7 +47,7 @@ class DetailsScreen extends Component {
     const { list, updated } = this.state;
 
     this.setState({
-      list: this.updateListActiveState(list, savedList),
+      list: updateListActiveState(list, savedList),
       updated: !updated
     });
   };
@@ -75,7 +56,16 @@ class DetailsScreen extends Component {
    * Renders FlatList single item
    */
   renderItem = ({ item }) => {
-    return <NameItem key={item.id} item={item} onClick={this.onClick} />;
+    return (
+      <NameItem
+        key={item.id}
+        item={item}
+        onClick={this.onClick}
+        iconName="star"
+        iconType="octicon"
+        containerStyles={{ paddingRight: 50 }}
+      />
+    );
   };
 
   /**
@@ -174,7 +164,6 @@ class DetailsScreen extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "red",
     paddingLeft: 15,
     paddingRight: 15
   }

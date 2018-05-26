@@ -1,13 +1,8 @@
 import React, { Component } from "react";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  Platform,
-  StyleSheet,
-  AsyncStorage
-} from "react-native";
+import { View, Text, StyleSheet, AsyncStorage } from "react-native";
 import { Button, Icon } from "react-native-elements";
+import Loading from "../../components/loading";
+import Error from "../../components/error";
 import Tile from "../../components/tile";
 import { getItemValue } from "../../utils/AsyncStorage";
 
@@ -34,36 +29,11 @@ class HomeScreen extends Component {
         savedList: JSON.parse(savedList)
       });
     } catch (error) {
-      console.log(error);
       this.setState({
         isLoading: false,
         error: "Úps eitthvað kom upp á"
       });
     }
-  }
-
-  renderError(error) {
-    const { container } = styles;
-
-    return (
-      <View style={container}>
-        <Text>{error}</Text>
-      </View>
-    );
-  }
-
-  renderLoading() {
-    const { container, loadingText } = styles;
-
-    return (
-      <View style={container}>
-        <ActivityIndicator
-          size={Platform.OS === "ios" ? "large" : 60}
-          color="#193446"
-        />
-        <Text style={loadingText}>Sæki nöfn...</Text>
-      </View>
-    );
   }
 
   render() {
@@ -72,11 +42,11 @@ class HomeScreen extends Component {
     const { container, tileContainer } = styles;
 
     if (error) {
-      return this.renderError(error);
+      return <Error>{error}</Error>;
     }
 
     if (isLoading || !list) {
-      return this.renderLoading();
+      return <Loading />;
     }
 
     return (
@@ -136,10 +106,6 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingTop: 10,
     paddingBottom: 10
-  },
-  loadingText: {
-    paddingTop: 15,
-    fontSize: 20
   },
   tileContainer: {
     paddingTop: 10,

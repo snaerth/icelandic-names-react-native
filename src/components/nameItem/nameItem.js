@@ -49,7 +49,6 @@ class NameItem extends PureComponent {
 
       this.notifyToast(`Nafn ${item.name} vistað!`);
       await AsyncStorage.setItem("@SavedNamesList", JSON.stringify(savedList));
-      console.log(savedList);
       // Callback click hander
       onClick(savedList);
     } catch (error) {
@@ -65,11 +64,17 @@ class NameItem extends PureComponent {
   }
 
   render() {
-    const { item, circleColor } = this.props;
+    const {
+      item,
+      circleColor,
+      iconName,
+      iconType,
+      containerStyles
+    } = this.props;
     const { container, name, subtitle, letter, circle, iconContainer } = styles;
 
     return (
-      <View style={container}>
+      <View style={[container, containerStyles || {}]}>
         <View style={[circle, { backgroundColor: circleColor }]}>
           <Text style={letter}>{item.name.charAt(0)}</Text>
         </View>
@@ -79,8 +84,8 @@ class NameItem extends PureComponent {
         </View>
         <View style={iconContainer}>
           <Icon
-            name="star"
-            type="octicon"
+            name={iconName}
+            type={iconType}
             color={item.active ? "#E9C77B" : "#dcdcdc"}
             size={40}
             onPress={this.saveName}
@@ -99,7 +104,7 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 15,
     paddingLeft: 15,
-    paddingRight: 50,
+    paddingRight: 15,
     borderWidth: 0.5,
     borderColor: "#dcdcdc",
     backgroundColor: "#ffffff",
