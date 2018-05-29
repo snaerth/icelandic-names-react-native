@@ -1,5 +1,9 @@
 import React from "react";
-import { StackNavigator, DrawerNavigator } from "react-navigation";
+import {
+  createStackNavigator,
+  createDrawerNavigator,
+  DrawerActions
+} from "react-navigation";
 import { Icon } from "react-native-elements";
 import DrawerMenu from "../components/drawerMenu";
 import transitionConfig from "./navigationAnimation";
@@ -8,7 +12,7 @@ import DetailsScreen from "../screens/detailsScreen";
 import SavedListScreen from "../screens/savedListScreen";
 
 // Manifest of possible screens
-const RootStack = StackNavigator(
+const RootStack = createStackNavigator(
   {
     Home: { screen: HomeScreen },
     Details: { screen: DetailsScreen },
@@ -34,14 +38,14 @@ const RootStack = StackNavigator(
           type="ionicon"
           color="#FFF"
           size={35}
-          onPress={() => navigation.navigate("DrawerOpen")}
+          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
         />
       )
     })
   }
 );
 
-const Drawer = DrawerNavigator(
+const Drawer = createDrawerNavigator(
   {
     Main: { screen: RootStack }
   },

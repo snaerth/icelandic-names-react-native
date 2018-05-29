@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, AsyncStorage } from "react-native";
+import { View, Text, StyleSheet, AsyncStorage, NetInfo } from "react-native";
 import { Button, Icon } from "react-native-elements";
 import Loading from "../../components/loading";
 import Error from "../../components/error";
 import Tile from "../../components/tile";
-import { getItemValue } from "../../utils/AsyncStorage";
+import { getItemValue, removeItemValue } from "../../utils/AsyncStorage";
 
 class HomeScreen extends Component {
   static navigationOptions = {
@@ -18,6 +18,23 @@ class HomeScreen extends Component {
   }
 
   async componentDidMount() {
+    const isConnected = await NetInfo.isConnected.fetch();
+
+    if (!isConnected) {
+      this.setState({
+        isLoading: false,
+        error: "Úps þú ert ekki með nettengingu"
+      });
+    } else {
+      this.getAndPrepareData();
+    }
+  }
+
+  /**
+   * Gets data from API and locally saved data as well
+   * and stores in in components state
+   */
+  async getAndPrepareData() {
     try {
       const savedList = await getItemValue("@SavedNamesList");
       const response = await fetch("http://138.68.191.12:1337/names");

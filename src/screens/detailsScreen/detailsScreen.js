@@ -1,5 +1,14 @@
 import React, { Component } from "react";
-import { View, FlatList, StyleSheet, Text, Alert } from "react-native";
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  Text,
+  Alert,
+  ToastAndroid,
+  Platform,
+  AsyncStorage
+} from "react-native";
 import NameItem from "../../components/nameItem";
 import Alphabet from "../../components/alphabet";
 import updateListActiveState from "../../utils/updateListActiveState";
@@ -24,33 +33,64 @@ class DetailsScreen extends Component {
       letterIndexes,
       letterIndexesValues: Object.values(letterIndexes),
       savedList: savedList || [],
-      list,
-      updated: false
+      list
     };
 
     this.onLetterPressHandler = this.onLetterPressHandler.bind(this);
   }
 
   componentWillMount() {
-    const { list, savedList, refreshFlatList, updated } = this.state;
+    const { list, savedList, refreshFlatList } = this.state;
 
     this.setState({
-      list: updateListActiveState(list, savedList),
-      updated: !updated
+      list: updateListActiveState(list, savedList)
     });
   }
 
-  /**
-   * Updates list names state with new state
-   */
-  onClick = savedList => {
-    const { list, updated } = this.state;
+  onPress = async item => {
+    let exists = false;
 
-    this.setState({
-      list: updateListActiveState(list, savedList),
-      updated: !updated
-    });
+    // Delete active prop from item object
+    if (item && item.active) {
+      delete item.active;
+    }
+
+    try {
+      let savedList = await AsyncStorage.getItem("@SavedNamesList");
+
+      if (savedList === null) {
+        savedList = [];
+        savedList.push(item);
+      } else {
+        savedList = JSON.parse(savedList);
+
+        for (let i = 0; i < savedList.length; i++) {
+          if (savedList[i].id === item.id) {
+            exists = true;
+            savedList.splice(i, 1);
+            break;
+          }
+        }
+
+        if (!exists) {
+          savedList.push(item);
+        } else {
+          this.notifyToast(`Nafn ${item.name} eytt!`);
+        }
+      }
+
+      this.notifyToast(`Nafn ${item.name} vistað!`);
+      await AsyncStorage.setItem("@SavedNamesList", JSON.stringify(savedList));
+    } catch (error) {
+      this.notifyToast(`Villa kom upp við að vista nafn!`);
+    }
   };
+
+  notifyToast(text) {
+    if (Platform.OS === "android") {
+      ToastAndroid.show(text, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+    }
+  }
 
   /**
    * Renders FlatList single item
@@ -60,7 +100,7 @@ class DetailsScreen extends Component {
       <NameItem
         key={item.id}
         item={item}
-        onClick={this.onClick}
+        onPress={this.onPress}
         iconName="star"
         iconType="octicon"
         containerStyles={{ paddingRight: 50 }}
@@ -128,14 +168,7 @@ class DetailsScreen extends Component {
   };
 
   render() {
-    const {
-      list,
-      letterIndexes,
-      alphabet,
-      savedList,
-      updated,
-      letter
-    } = this.state;
+    const { list, letterIndexes, alphabet, savedList, letter } = this.state;
     const { container } = styles;
 
     return (
@@ -145,9 +178,8 @@ class DetailsScreen extends Component {
           keyExtractor={item => item.id}
           renderItem={this.renderItem}
           getItemLayout={this.getItemLayout}
-          initialNumToRender={20}
+          initialNumToRender={8}
           onScrollEndDrag={this.handleScroll}
-          extraData={updated}
           ref={ref => {
             this.flatListRef = ref;
           }}

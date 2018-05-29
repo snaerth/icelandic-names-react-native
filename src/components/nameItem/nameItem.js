@@ -1,67 +1,13 @@
 import React, { PureComponent } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ToastAndroid,
-  Platform,
-  AsyncStorage
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "react-native-elements";
 
 class NameItem extends PureComponent {
-  constructor(props) {
-    super(props);
+  saveName = () => {
+    const { onPress, item } = this.props;
 
-    this.state = {
-      savedList: []
-    };
-  }
-
-  saveName = async () => {
-    const { item, onClick } = this.props;
-    let exists = false;
-
-    try {
-      let savedList = await AsyncStorage.getItem("@SavedNamesList");
-
-      if (savedList === null) {
-        savedList = [];
-        savedList.push(item);
-      } else {
-        savedList = JSON.parse(savedList);
-
-        for (let i = 0; i < savedList.length; i++) {
-          if (savedList[i].id === item.id) {
-            exists = true;
-            savedList.splice(i, 1);
-            break;
-          }
-        }
-
-        if (!exists) {
-          savedList.push(item);
-        } else {
-          this.notifyToast(`Nafn ${item.name} eytt!`);
-        }
-      }
-
-      this.notifyToast(`Nafn ${item.name} vistað!`);
-      await AsyncStorage.setItem("@SavedNamesList", JSON.stringify(savedList));
-      // Callback click hander
-      onClick(savedList);
-    } catch (error) {
-      console.error(error);
-      this.notifyToast(`Villa kom upp við að vista nafn!`);
-    }
+    onPress(item);
   };
-
-  notifyToast(text) {
-    if (Platform.OS === "android") {
-      ToastAndroid.show(text, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
-    }
-  }
 
   render() {
     const {

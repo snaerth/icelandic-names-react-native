@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { ListItem } from "react-native-elements";
+import {
+  StackActions,
+  NavigationActions,
+  DrawerActions
+} from "react-navigation";
 import { LinearGradient } from "expo";
 
 const MENU_ITEMS = [
@@ -25,6 +30,22 @@ const MENU_ITEMS = [
 ];
 
 class DrawerMenu extends Component {
+  onPressHandler = screen => {
+    const { navigation } = this.props;
+
+    navigation.dispatch(DrawerActions.closeDrawer());
+
+    if (screen === "Home") {
+      const resetAction = StackActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: screen })]
+      });
+      navigation.dispatch(resetAction);
+    } else {
+      navigation.navigate(screen);
+    }
+  };
+
   render() {
     const { navigation } = this.props;
     const { container, titleContainer, titleText } = styles;
@@ -43,7 +64,7 @@ class DrawerMenu extends Component {
                   <Text style={titleText}>{name}</Text>
                 </View>
               }
-              onPress={() => navigation.navigate(screen)}
+              onPress={() => this.onPressHandler(screen)}
             />
           );
         })}
