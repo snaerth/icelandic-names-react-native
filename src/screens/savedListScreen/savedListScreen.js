@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import {
+  Alert,
   View,
   FlatList,
   StyleSheet,
@@ -43,10 +44,7 @@ class SavedListScreen extends Component {
     }
   }
 
-  /**
-   * Deletes current item from AsyncStorage
-   */
-  onPress = async item => {
+  async deleteItem(item) {
     try {
       const { list } = this.state;
 
@@ -67,11 +65,29 @@ class SavedListScreen extends Component {
     } catch (error) {
       this.notifyToast(`Villa kom upp við að eyða nafni!`);
     }
+  }
+
+  /**
+   * Deletes current item from AsyncStorage
+   */
+  onPress = item => {
+    Alert.alert(
+      "Eyða nafni",
+      `Ertu viss um að þú viljir eyða ${item.name}?`,
+      [
+        {
+          text: "Hætta við",
+          style: "cancel"
+        },
+        { text: "Já", onPress: () => this.deleteItem(item) }
+      ],
+      { cancelable: false }
+    );
   };
 
   notifyToast(text) {
     if (Platform.OS === "android") {
-      ToastAndroid.show(text, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+      ToastAndroid.show(text, ToastAndroid.SHORT, ToastAndroid.CENTER);
     }
   }
 
@@ -98,7 +114,7 @@ class SavedListScreen extends Component {
   };
 
   render() {
-    const { isLoading, error, list } = this.state;
+    const { isLoading, error, list, showModal } = this.state;
     const { container, noDataText, noDataTextContainer, noDataIcon } = styles;
     let returnData = null;
 

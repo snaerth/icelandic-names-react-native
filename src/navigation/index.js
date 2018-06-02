@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  View,
   createStackNavigator,
   createDrawerNavigator,
   DrawerActions
@@ -33,13 +34,15 @@ const RootStack = createStackNavigator(
         color: "#FFF"
       },
       headerRight: (
-        <Icon
-          name="ios-menu"
-          type="ionicon"
-          color="#FFF"
-          size={35}
-          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        />
+        <View>
+          <Icon
+            name="ios-menu"
+            type="ionicon"
+            color="#FFF"
+            size={35}
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+          />
+        </View>
       )
     })
   }

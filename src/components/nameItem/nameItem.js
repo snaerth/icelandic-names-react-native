@@ -33,7 +33,7 @@ class NameItem extends PureComponent {
             name={iconName}
             type={iconType}
             color={item.active ? "#E9C77B" : "#dcdcdc"}
-            size={40}
+            size={30}
             onPress={this.saveName}
           />
         </View>
