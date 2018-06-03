@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, AsyncStorage, NetInfo } from "react-native";
+import { View, Text, StyleSheet, AsyncStorage } from "react-native";
 import { Button, Icon } from "react-native-elements";
 import Loading from "../../components/loading";
 import Error from "../../components/error";
 import Tile from "../../components/tile";
 import { getItemValue, removeItemValue } from "../../utils/AsyncStorage";
+import { internetConnection } from "../../utils/Network";
 
 class HomeScreen extends Component {
   static navigationOptions = {
@@ -18,7 +19,7 @@ class HomeScreen extends Component {
   }
 
   async componentDidMount() {
-    const isConnected = await NetInfo.isConnected.fetch();
+    const isConnected = await internetConnection();
 
     if (!isConnected) {
       this.setState({
@@ -29,6 +30,8 @@ class HomeScreen extends Component {
       this.getAndPrepareData();
     }
   }
+
+  checkNet;
 
   /**
    * Gets data from API and locally saved data as well

@@ -1,21 +1,21 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import {
   View,
+  Dimensions,
   FlatList,
   StyleSheet,
   Text,
   Alert,
-  ToastAndroid,
-  Platform,
   AsyncStorage
 } from "react-native";
+import Toast from "react-native-root-toast";
 import NameItem from "../../components/nameItem";
 import Alphabet from "../../components/alphabet";
 import updateListActiveState from "../../utils/updateListActiveState";
 
 const ROW_HEIGHT = 80;
 
-class DetailsScreen extends Component {
+class DetailsScreen extends PureComponent {
   static navigationOptions = ({ navigation }) => ({
     title: navigation.state.params.title
   });
@@ -28,12 +28,15 @@ class DetailsScreen extends Component {
       savedList
     } = this.props.navigation.state.params;
     this.state = {
+      screenHeight: Dimensions.get("window").height,
       alphabet,
       letter: "A",
       letterIndexes,
       letterIndexesValues: Object.values(letterIndexes),
       savedList: savedList || [],
-      list
+      list,
+      showToast: false,
+      toastMessage: ""
     };
 
     this.onLetterPressHandler = this.onLetterPressHandler.bind(this);
@@ -74,22 +77,28 @@ class DetailsScreen extends Component {
 
         if (!exists) {
           savedList.push(item);
+          this.notifyToast(`Nafn ${item.name} vistað!`);
         } else {
           this.notifyToast(`Nafn ${item.name} eytt!`);
         }
       }
 
-      this.notifyToast(`Nafn ${item.name} vistað!`);
       await AsyncStorage.setItem("@SavedNamesList", JSON.stringify(savedList));
     } catch (error) {
       this.notifyToast(`Villa kom upp við að vista nafn!`);
     }
   };
 
-  notifyToast(text) {
-    if (Platform.OS === "android") {
-      ToastAndroid.show(text, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
-    }
+  /**
+   * Displays toast message
+   * @param {String} toastMessage - Message for toast
+   */
+  notifyToast(toastMessage) {
+    this.setState({ showToast: true, toastMessage }, () => {
+      setTimeout(() => {
+        this.setState({ showToast: false, toastMessage: "" });
+      }, Toast.durations.SHORT);
+    });
   }
 
   /**
@@ -121,7 +130,7 @@ class DetailsScreen extends Component {
 
     try {
       this.flatListRef.scrollToIndex({
-        animated: true,
+        animated: false,
         index: letterIndexes[letter]
       });
     } catch (e) {}
@@ -168,17 +177,34 @@ class DetailsScreen extends Component {
   };
 
   render() {
-    const { list, letterIndexes, alphabet, savedList, letter } = this.state;
+    const {
+      list,
+      letterIndexes,
+      alphabet,
+      savedList,
+      letter,
+      screenHeight,
+      showToast,
+      toastMessage
+    } = this.state;
     const { container } = styles;
 
     return (
       <View className={container}>
+        <Toast
+          visible={showToast}
+          position={Toast.positions.CENTER}
+          animation={true}
+          shadow={false}
+        >
+          {toastMessage}
+        </Toast>
         <FlatList
           data={list}
           keyExtractor={item => item.id}
           renderItem={this.renderItem}
           getItemLayout={this.getItemLayout}
-          initialNumToRender={8}
+          initialNumToRender={parseInt(screenHeight / 80, 10)}
           onScrollEndDrag={this.handleScroll}
           ref={ref => {
             this.flatListRef = ref;
