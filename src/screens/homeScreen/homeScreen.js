@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, AsyncStorage } from "react-native";
-import { Button, Icon } from "react-native-elements";
+import { View, StyleSheet } from "react-native";
 import Loading from "../../components/loading";
 import Error from "../../components/error";
 import Tile from "../../components/tile";
-import { getItemValue, removeItemValue } from "../../utils/AsyncStorage";
+import { getItemValue } from "../../utils/AsyncStorage";
 import { internetConnection } from "../../utils/Network";
 
 class HomeScreen extends Component {
@@ -31,8 +30,6 @@ class HomeScreen extends Component {
     }
   }
 
-  checkNet;
-
   /**
    * Gets data from API and locally saved data as well
    * and stores in in components state
@@ -40,15 +37,26 @@ class HomeScreen extends Component {
   async getAndPrepareData() {
     try {
       const savedList = await getItemValue("@SavedNamesList");
-      const response = await fetch("http://138.68.191.12:1337/names");
+      const response = await fetch("http://138.68.191.12:1337/names", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          key: "39D1A56D43CF13934AC1D86F83B49"
+        })
+      });
       let responseJson = await response.json();
-
+      console.log(responseJson);
       this.setState({
         isLoading: false,
         list: responseJson,
         savedList: JSON.parse(savedList)
       });
     } catch (error) {
+      console.error("error", error);
+
       this.setState({
         isLoading: false,
         error: "Úps eitthvað kom upp á"
